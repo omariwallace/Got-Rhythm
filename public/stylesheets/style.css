@@ -1,0 +1,98 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #333;
+  color: #555;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+#page-wrapper {
+  width: 70%;
+  margin: 5em auto;
+  padding: 1.5rem;
+  background: #FFF;
+  border-top: 5px solid #69c773;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+
+#synth-pad {
+  float: right;
+  width: 48%;
+  height: 30em;
+  border-radius: 3px;
+  background: #1E1E1E url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQYV2P8+vWrJAMRgBGkkJub+zkhtaMK8YYQ0cEDABxGJwNr5yClAAAAAElFTkSuQmCC);
+}
+
+#synth-pad:hover {
+  cursor: crosshair;
+}
+
+#info {
+  float: left;
+  width: 48%;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+h1 {
+  display: block;
+  text-align: center;
+  font-family: Impact, Charcoal, sans-serif;
+  font-weight: normal;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+p {
+  line-height: 1.8rem;
+}
+
+.clearfix {
+  *zoom: 1;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.btn-group {
+  width: 100%;
+}
+
+.btn-group button{
+  width: 25%;
+}
+
+#kit-dashboard {
+  padding: 20px;
+  background-color: lightgrey;
+  border-radius: 5px;
+}
+
+#loops {
+  margin-bottom: 10px;
+}
+
+#synth-title {
+  font-family: Copperplate Gothic Light, sans-serif;
+  font-weight: bold;
+  /*border: 1px solid red;*/
+  margin-bottom: 5px;
+  margin-top: 0px;
+  text-align: center;
+  float: right;
+  width: 48%;
+}
+
+#description {
+  float: right;
+  width: 48%;
+}
