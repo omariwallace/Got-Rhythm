@@ -6,13 +6,115 @@ $(document).ready(function() {
 
   // Initialize Synth Pad
   var synthPad = new SynthPad();
-
-
-
 })
 
-// **** Syntesizer **** //
 
+// ************ DrumKit Buttons ************ //
+// Name source for both the files and the DOM elements
+var sources = ["clap", "clap_lo", "cymbal", "hi_hat", "horn", "horn_lo", "kick", "kick_lo", "snare","synth_long","synth_short", "bass_hit", "Loop_HouseFunky", "Loop_LegGoPiano", "Loop_SpacedOut"]
+
+// Creates an audio context object in the variable 'context'
+// Use XMLHttpRequest for fetching sound files
+var context;
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+var context = new AudioContext(); // <-- WHERE THE MAGIC HAPPENS
+var source_url_obj = {}; // Holds Audio Buffers
+
+// Load sound from source, store audio buffer in source url object (done on page load)
+function loadSound(url) {
+  // Request audio file
+  url += ".wav"
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  // Audio data is in binary, therefore response type must be set to 'array buffer' -- more detail below in Note (1)
+  request.responseType = 'arraybuffer';
+
+  // Decode asynchronously, store audio in buffer
+  request.onload = function() { // <-- ** LOOKUP .onload method
+    // Asychronously decode the audio buffer with the .decodeAudioData method
+    context.decodeAudioData(request.response, function(buffer) {
+      // when complete, calls the callback with the decoded PCM (see Note 2) data as an AudioBuffer
+      source_url_obj[url] = buffer;
+    })
+  };
+  request.send();
+}
+
+// *** DRUM HITS ***
+// Add event handlers (For Self Play)
+// $.each(sources, function(i, source) {
+//   $("#"+source).on('click', function() {
+//     playBeat(source_url_obj[source+".wav"]);
+//   })
+// })
+
+// // Add event handlers (For Drum Kit Social)
+$.each(sources, function(i, source) {
+  $("#"+source).on('click', function() {
+    socket.emit("drum_hit", {"source": source+".wav"});
+  })
+})
+
+// Social Drum Kit Functionality
+// Event recieved, play sound on YOUR machine
+var socket = io.connect()
+socket.on("drum_played", function (data) {
+  // alert("Somebody rockin' dem beats!");
+  var source = data['source_serv']['source'];
+  playBeat(source_url_obj[source]);
+});
+
+// Click a button, play sound on OTHER folks' client
+$('button').on('mousedown', function() {
+  socket.emit("drum_hit", {"source": $(this.val())});
+})
+
+
+// Plays the drum hits
+function playBeat(buffer) {
+  var source = context.createBufferSource(); // creates a sound source
+  source.buffer = buffer;                    // tell the source which sound to play
+  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+  source.start(0);                           // play the source now
+                                             // note: on older systems, may have to use deprecated noteOn(time);
+}
+
+// *** LOOPS ***
+// Loop Object
+var audio = { _isPlaying: false}
+
+// Adds event handlers for loops (Play)
+$("#play").on('click', function() {
+  var selection = ($("#loops").val().replace(/\s+/g, ''));
+  var playBuffer = source_url_obj["Loop_"+selection+".wav"]
+  playLoop(selection, playBuffer)
+})
+
+// Adds event handlers for loops (Stop)
+$("#stop").on('click', function() {
+var selection = ($("#loops").val().replace(/\s+/g, ''));
+  stopLoop(selection);
+})
+
+// Plays the loops
+function playLoop(key, buffer) {
+  if (!audio._isPlaying) {
+    audio[key] = context.createBufferSource();
+    audio[key]["buffer"] = buffer;
+    audio[key].loop = true;
+    audio[key].connect(context.destination);
+    audio[key].start(0);
+    audio._isPlaying = true;
+  }
+}
+
+// Stops the loops
+function stopLoop(key) {
+  audio[key].stop(0);
+  audio._isPlaying = false;
+}
+
+// ************** Syntesizer ************** //
 var SynthPad = (function() {
   // Variables
   var myCanvas;
@@ -132,104 +234,8 @@ var SynthPad = (function() {
   return SynthPad;
 })();
 
-// **** DrumKit Buttons **** //
-var sources = ["clap", "clap_lo", "cymbal", "hi_hat", "horn", "horn_lo", "kick", "kick_lo", "snare","synth_long","synth_short", "bass_hit", "Loop_DaftPunky", "Loop_LegGoPiano", "Loop_SpacedOut"]
+// ************** REFACTORED ************** //
 
-var context;
-
-// Creates an audio context in the variable 'context'
-// Use XMLHttpRequest for fetching sound files
-// Fix up prefixing
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
-var context = new AudioContext();
-var source_url_obj = {};
-// var source_url = "RecordScratchDamage.mp3"
-
-// Load sound from source
-function loadSound(url) {
-  url += ".wav"
-  var request = new XMLHttpRequest();
-  request.open('GET', url, true);
-  // Audio data is in binary, therefore response type must be set to 'array buffer' -- more detail below in Note (1)
-  request.responseType = 'arraybuffer';
-
-  // Decode asynchronously
-  request.onload = function() { // <-- ** LOOKUP .onload method
-    // Asychronously decode the audio buffer with the .decodeAudioData method
-    context.decodeAudioData(request.response, function(buffer) {
-      // when complete, calls the callback with the decoded PCM (see Note 2) data as an AudioBuffer
-      source_url_obj[url] = buffer;
-    })
-  };
-  request.send();
-}
-
-var audio = {
-  _isPlaying: false
-}
-
-function playBeat(buffer) {
-  var source = context.createBufferSource(); // creates a sound source
-  source.buffer = buffer;                    // tell the source which sound to play
-  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-  source.start(0);                           // play the source now
-                                             // note: on older systems, may have to use deprecated noteOn(time);
-}
-
-// Play sound from loaded source
-function playLoop(key, buffer) {
-  if (!audio._isPlaying) {
-    audio[key] = context.createBufferSource();
-    audio[key]["buffer"] = buffer;
-    audio[key].loop = true;
-    audio[key].connect(context.destination);
-    audio[key].start(0);
-    audio._isPlaying = true;
-  }
-}
-
-function stopLoop(key) {
-  audio[key].stop(0);
-  audio._isPlaying = false;
-}
-
-// Add event handlers
-// $.each(sources, function(i, source) {
-//   $("#"+source).on('click', function() {
-//     playBeat(source_url_obj[source+".wav"]);
-//   })
-// })
-
-$.each(sources, function(i, source) {
-  $("#"+source).on('click', function() {
-    socket.emit("drum_hit", {"source": source+".wav"});
-  })
-})
-
-
-
-$("#play").on('click', function() {
-  var selection = ($("#loops").val().replace(/\s+/g, ''));
-  var playBuffer = source_url_obj["Loop_"+selection+".wav"]
-  playLoop(selection, playBuffer)
-})
-
-$("#stop").on('click', function() {
-var selection = ($("#loops").val().replace(/\s+/g, ''));
-  stopLoop(selection);
-})
-
-// When beat clicked, show alert
-var socket = io.connect()
-socket.on("drum_played", function (data) {
-  // alert("Somebody rockin' dem beats!");
-  var source = data['source_serv']['source'];
-  playBeat(source_url_obj[source]);
-});
-
-  $('button').on('mousedown', function() {
-    socket.emit("drum_hit", {"source": $(this.val())});
-  })
 // $("#bass_hit").on('click', function() {
 //   playSound(source_url_obj["bass_hit.wav"]);
 // })
