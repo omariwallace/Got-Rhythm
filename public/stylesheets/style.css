@@ -15,18 +15,6 @@ body {
   box-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 
-#synth-pad {
-  float: right;
-  width: 48%;
-  height: 30em;
-  border-radius: 3px;
-  background: #1E1E1E url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQYV2P8+vWrJAMRgBGkkJub+zkhtaMK8YYQ0cEDABxGJwNr5yClAAAAAElFTkSuQmCC);
-}
-
-#synth-pad:hover {
-  cursor: crosshair;
-}
-
 #info {
   float: left;
   width: 48%;
@@ -81,18 +69,18 @@ p {
   margin-bottom: 10px;
 }
 
-#synth-title {
-  font-family: Copperplate Gothic Light, sans-serif;
-  font-weight: bold;
-  /*border: 1px solid red;*/
-  margin-bottom: 5px;
-  margin-top: 0px;
-  text-align: center;
-  float: right;
-  width: 48%;
-}
-
 #description {
   float: right;
   width: 48%;
+  height: 100%;
+}
+
+#description .panel-body {
+  height: 270px;
+}
+
+#visualization {
+  /*border: red 1px solid;*/
+  height: 100%;
+  width: 100%;
 }

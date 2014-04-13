@@ -54,13 +54,9 @@
           <h3 class="panel-title">Visualization(Coming Soon)</h3>
         </div>
         <div class="panel-body">
-          <!-- <p>Click and drag the mouse over the synthesiser pad to generate a sound.</p>
-          <p>Frequency: <span id="frequency">n/a</span></p>
-          <p>Volume: <span id="volume">n/a</span></p> -->
-          <p>Coming soon: Visualization Notes</p>
+          <div id="visualization"></div>
         </div>
       </div>
-    <!-- <canvas id="synth-pad"></canvas> -->
   </div>
 
 
@@ -74,21 +70,13 @@
   <!-- Socket.io -->
   <script src="/socket.io/socket.io.js"></script>
 
-  <!-- D3 Libarary -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.4/d3.min.js"></script>
+  <!-- Three.js Libarary -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r66/three.min.js"></script>
+
+  <!-- Visulalizer -->
+  <script src="visualizer.js" type="text/javascript"></script>
 
   <!-- Local scripts -->
   <script src="scripts.js" type="text/javascript"></script>
-  <script>
-    // load the socket.io library above, the connect to the server
-    // because the socket.io server is being run on the same server as your
-    // express instance, you can connect() without any additional information
-    // var socket = io.connect(); // TIP: .connect with no args does auto-discovery
-
-    // // When beat clicked, show alert
-    // socket.on("drum_hit", function (data) {
-    //   alert(data);
-    // });
-  </script>
  </body>
 </html>
