@@ -9,7 +9,6 @@ $(document).ready(function() {
   $('.Switch').click(function() {
     $(this).toggleClass('On').toggleClass('Off');
     window.solo = !window.solo;
-    console.log("switch: ", $(this).val())
   });
 });
 
@@ -62,34 +61,36 @@ function loadSound(url) {
 }
 
 // *** DRUM HITS ***
-// Add event handlers (For Self Play)
-if(window.solo) {
-  $.each(sources, function(i, source) {
-    $("#"+source).on('click', function() {
+$.each(sources, function(i, source) {
+  $("#"+source).on('click', function() {
+    if(window.solo) {
+      // Add event handlers (For Self Play)
+      console.log("solo play beat");
       playBeat(source_url_obj[source+".wav"]);
-    })
-  })
-} else {
-  // Add event handlers (For Drum Kit Social)
-  $.each(sources, function(i, source) {
-    $("#"+source).on('click', function() {
+    } else {
+      // Add event handlers (For Drum Kit Social)
+      console.log("social play beat");
       socket.emit("drum_hit", {"source": source+".wav"});
-    });
+    }
   });
-  // Social Drum Kit Functionality
-  // Event recieved, play sound on YOUR machine
-  var socket = io.connect();
+});
+
+var socket = io.connect();
   socket.on("drum_played", function (data) {
-    // alert("Somebody rockin' dem beats!");
+    // console.log("Somebody rockin' dem beats!");
     var source = data['source_serv']['source'];
-    playBeat(source_url_obj[source]);
+      if(!window.solo) {
+        // console.log("solo?: ", window.solo);
+        playBeat(source_url_obj[source]);
+        // console.log("just played from socket")
+      }
   });
 
-  // Click a button, play sound on OTHER folks' client
-  $('button').on('mousedown', function() {
-    socket.emit("drum_hit", {"source": $(this.val())});
-  });
-}
+  // // Click a button, play sound on OTHER folks' client
+  // $('button.drums').on('mousedown', function() {
+  //   console.log("this: ", $(this.val()));
+  //   // socket.emit("drum_hit", {"source": $(this.val())});
+  // });
 
 
 
@@ -110,22 +111,28 @@ var audio = { _isPlaying: false};
 // Adds event handlers for loops (Play)
 $("#play").on('click', function() {
   var selection = ($("#loops").val().replace(/\s+/g, ''));
-  var playBuffer = source_url_obj["Loop_"+selection+".wav"];
-  playLoop(selection, playBuffer);
+  if (selection === "PickYourFlava'...") {
+    alert("Select your track loop from the dropdown!")
+  } else {
+    var playBuffer = source_url_obj["Loop_"+selection+".wav"];
+    if (!audio._isPlaying) {
+      playLoop(selection, playBuffer);
+    }
+  }
 });
 
 // Adds event handlers for loops (Stop)
 $("#stop").on('click', function() {
 var selection = ($("#loops").val().replace(/\s+/g, ''));
-  stopLoop(selection);
+  if (audio._isPlaying) {
+    stopLoop(selection);
+  }
 });
 
 // Plays the loops
 function playLoop(key, buffer) {
-  if (!audio._isPlaying) {
     sourceJs["buffer"] = buffer;
     sourceJs.connect(context.destination);
-
     audio[key] = context.createBufferSource();
     audio[key].loop = true;
     audio[key]["buffer"] = buffer;
@@ -147,7 +154,6 @@ function playLoop(key, buffer) {
 
     audio[key].start(0);
     audio._isPlaying = true;
-  }
 }
 
 // Stops the loops
