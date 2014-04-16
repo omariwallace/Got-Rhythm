@@ -8,8 +8,11 @@ A project by Omari Wallace
 
 =================================
 
+
 ###FUTURE UPDATES:
-- Button to make gameplay solo or social!
-- Music Visualization
 - User Login
 - Unique game rooms
+
+##RECENT UPDATES
+- Button to make gameplay solo or social! (Added 4.15.14)
+- Music Visualization (version 1.0 Added 4.15.14)

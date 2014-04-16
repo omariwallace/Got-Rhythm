@@ -38,22 +38,15 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-app.get('/omari', function(req, res) {
-  io.sockets.emit("drum_hit");
-})
-// app.get('/', function (req, res) {
-//   res.sendfile(__dirname + '/index.html');
-// });
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+// Socket io
 var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
   socket.on('drum_hit', function(data) {
     socket.broadcast.emit('drum_played',{"source_serv":data});
   });
 });
-// Socket io
-
-// app.listen(80);
