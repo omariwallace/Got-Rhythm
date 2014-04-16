@@ -3,6 +3,14 @@ $(document).ready(function() {
   for (var i=0; i<sources.length; i++) {
     loadSound(sources[i]);
   }
+
+  // Switch toggle
+  window.solo = true;
+  $('.Switch').click(function() {
+    $(this).toggleClass('On').toggleClass('Off');
+    window.solo = !window.solo;
+    console.log("switch: ", $(this).val())
+  });
 });
 
 
@@ -14,6 +22,7 @@ var context;
 var source, sourceJs;
 var analyzer;
 var buffer;
+window.boost = 0;
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -54,32 +63,35 @@ function loadSound(url) {
 
 // *** DRUM HITS ***
 // Add event handlers (For Self Play)
-$.each(sources, function(i, source) {
-  $("#"+source).on('click', function() {
-    playBeat(source_url_obj[source+".wav"]);
+if(window.solo) {
+  $.each(sources, function(i, source) {
+    $("#"+source).on('click', function() {
+      playBeat(source_url_obj[source+".wav"]);
+    })
   })
-})
-
-// // Add event handlers (For Drum Kit Social)
-$.each(sources, function(i, source) {
-  $("#"+source).on('click', function() {
-    socket.emit("drum_hit", {"source": source+".wav"});
+} else {
+  // Add event handlers (For Drum Kit Social)
+  $.each(sources, function(i, source) {
+    $("#"+source).on('click', function() {
+      socket.emit("drum_hit", {"source": source+".wav"});
+    });
   });
-});
+  // Social Drum Kit Functionality
+  // Event recieved, play sound on YOUR machine
+  var socket = io.connect();
+  socket.on("drum_played", function (data) {
+    // alert("Somebody rockin' dem beats!");
+    var source = data['source_serv']['source'];
+    playBeat(source_url_obj[source]);
+  });
 
-// Social Drum Kit Functionality
-// Event recieved, play sound on YOUR machine
-var socket = io.connect();
-socket.on("drum_played", function (data) {
-  // alert("Somebody rockin' dem beats!");
-  var source = data['source_serv']['source'];
-  playBeat(source_url_obj[source]);
-});
+  // Click a button, play sound on OTHER folks' client
+  $('button').on('mousedown', function() {
+    socket.emit("drum_hit", {"source": $(this.val())});
+  });
+}
 
-// Click a button, play sound on OTHER folks' client
-$('button').on('mousedown', function() {
-  socket.emit("drum_hit", {"source": $(this.val())});
-});
+
 
 
 // Plays the drum hits
@@ -126,6 +138,11 @@ function playLoop(key, buffer) {
     sourceJs.onaudioprocess = function(e) {
       array = new Uint8Array(analyzer.frequencyBinCount);
       analyzer.getByteFrequencyData(array);
+      window.boost = 0;
+      for (var i=0; i<array.length; i++) {
+        window.boost += array[i]
+      }
+      window.boost = window.boost/array.length;
     };
 
     audio[key].start(0);
