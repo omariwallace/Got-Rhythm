@@ -1,6 +1,6 @@
 # GOT RHYTHM?
 
-A project by Omari Wallace
+A project by **Omari Wallace**
 
 **Got Rhythm?** is a social drumkit experiment that explores the HTML5 webaudio API integrated with socket.io for multiplayer gameplay.
 
@@ -8,11 +8,10 @@ A project by Omari Wallace
 
 =================================
 
-
-###FUTURE UPDATES:
+##FUTURE UPDATES:
 - User Login
 - Unique game rooms
 
-##RECENT UPDATES
+##RECENT UPDATES:
 - Button to make gameplay solo or social! (Added 4.15.14)
 - Music Visualization (version 1.0 Added 4.15.14)
