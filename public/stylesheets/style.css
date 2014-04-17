@@ -1,20 +1,39 @@
-body {
-  margin: 0;
-  padding: 0;
-  background: #333;
-  color: #555;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+html{
+    /* This image will be displayed fullscreen */
+    background:url('../images/speaker.jpg') no-repeat center center;
+
+    /* Ensure the html element always takes up the full height of the browser window */
+    min-height:100%;
+
+    /* The Magic */
+    background-size:cover;
 }
 
-#page-wrapper {
+body {
+  margin: 0;
+  padding: 100px 30px;
+  background: transparent;
+  color: #555;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Workaround for some mobile browsers */
+  min-height:100%;
+}
+
+/*#page-wrapper {
   width: 70%;
   margin: 5em auto;
   padding: 1.5rem;
   background: #FFF;
   border-top: 5px solid #69c773;
   box-shadow: 0 2px 10px rgba(0,0,0,0.8);
-}
+}*/
 
+.page-title {
+  color: white;
+  font-family: 'Rock Salt', cursive;
+  margin-top: 10px;
+  margin-bottom: 5`0px;
+}
 #info {
   float: left;
   width: 48%;
@@ -37,7 +56,7 @@ p {
 }
 
 .clearfix {
-  *zoom: 1;
+  zoom: 1;
 }
 
 .clearfix:before,
@@ -83,6 +102,7 @@ p {
   /*border: red 1px solid;*/
   height: 100%;
   width: 100%;
+  background: black;
 }
 
 .controls {

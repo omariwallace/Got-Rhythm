@@ -10,6 +10,7 @@ $(document).ready(function() {
     $(this).toggleClass('On').toggleClass('Off');
     window.solo = !window.solo;
   });
+
 });
 
 

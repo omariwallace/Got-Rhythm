@@ -1,6 +1,39 @@
+// Mobile checking
+// Source: http://www.abeautifulsite.net/blog/2011/11/detecting-mobile-devices-with-javascript/
+var isMobile = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+};
+
+window.mobile = isMobile.any();
+
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, $("#visualization").width() / $("#visualization").height(), 0.1, 1000);
-var renderer = new THREE.WebGLRenderer();
+  if(!window.mobile) {
+    console.log("GL mobile: ", window.mobile)
+    var renderer = new THREE.WebGLRenderer();
+  } else {
+    console.log("Canvas mobile: ", window.mobile)
+    var renderer = new THREE.CanvasRenderer();
+  }
+
 renderer.setSize( $("#visualization").width(), $("#visualization").height());
 // $("#visualization").append(renderer.domElement);
 document.getElementById("visualization").appendChild(renderer.domElement)
